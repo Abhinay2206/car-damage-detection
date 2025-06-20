@@ -1,5 +1,6 @@
 import React from 'react';
 import { DollarSign, Wrench, Package, Clock, TrendingUp } from 'lucide-react';
+import { useCurrency } from '../contexts/useCurrency';
 
 interface CostItem {
   part: string;
@@ -18,13 +19,8 @@ export default function CostEstimation({ costBreakdown, totalRange }: CostEstima
   const totalLabor = costBreakdown.reduce((sum, item) => sum + item.laborCost, 0);
   const totalParts = costBreakdown.reduce((sum, item) => sum + item.partsCost, 0);
   const totalHours = costBreakdown.reduce((sum, item) => sum + item.estimatedHours, 0);
-
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
+  
+  const { formatCurrency } = useCurrency();
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">

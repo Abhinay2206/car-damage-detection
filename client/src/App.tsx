@@ -6,15 +6,36 @@ import CostEstimation from './components/CostEstimation';
 import SummaryReport from './components/SummaryReport';
 import ProgressIndicator from './components/ProgressIndicator';
 import { useDamageAssessment } from './hooks/useDamageAssessment';
+import { CurrencyProvider } from './contexts/CurrencyContext';
+import CurrencySwitcher from './components/CurrencySwitcher';
+
+interface DamageItem {
+  id: string;
+  part: string;
+  severity: 'Minor' | 'Moderate' | 'Severe';
+  damageType: 'Scratch' | 'Dent' | 'Break' | 'Other';
+  location: { x: number; y: number };
+  description: string;
+}
+
+interface CostItem {
+  part: string;
+  laborCost: number;
+  partsCost: number;
+  total: number;
+  estimatedHours: number;
+}
 
 interface AssessmentData {
-  damages: any[];
-  costBreakdown: any[];
+  damages: DamageItem[];
+  costBreakdown: CostItem[];
   totalRange: { min: number; max: number };
   damageDescription: string;
   recommendedActions: string[];
   timeline: string;
 }
+
+
 
 function App() {
   const [uploadedImage, setUploadedImage] = useState<string | null>(null);
@@ -54,32 +75,38 @@ function App() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-blue-100 rounded-lg">
-                <Car className="w-6 h-6 text-blue-600" />
+    <CurrencyProvider>
+      <div className="min-h-screen bg-gray-50">
+        {/* Header */}
+        <header className="bg-white shadow-sm border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <div className="p-2 bg-blue-100 rounded-lg">
+                  <Car className="w-6 h-6 text-blue-600" />
+                </div>
+                <div>
+                  <h1 className="text-xl font-semibold text-gray-900">Car Damage Assessment</h1>
+                  <p className="text-sm text-gray-600">AI-powered damage analysis and cost estimation</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-xl font-semibold text-gray-900">Car Damage Assessment</h1>
-                <p className="text-sm text-gray-600">AI-powered damage analysis and cost estimation</p>
+              <div className="flex items-center gap-3">
+                <React.Suspense fallback={null}>
+                  <CurrencySwitcher />
+                </React.Suspense>
+                {(uploadedImage || assessmentData) && (
+                  <button
+                    onClick={handleReset}
+                    className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                    Start Over
+                  </button>
+                )}
               </div>
             </div>
-            {(uploadedImage || assessmentData) && (
-              <button
-                onClick={handleReset}
-                className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
-              >
-                <RotateCcw className="w-4 h-4" />
-                Start Over
-              </button>
-            )}
           </div>
-        </div>
-      </header>
+        </header>
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Progress Indicator */}
@@ -140,6 +167,7 @@ function App() {
         </div>
       </footer>
     </div>
+    </CurrencyProvider>
   );
 }
 

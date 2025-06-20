@@ -1,5 +1,6 @@
 import React from 'react';
 import { FileText, Download, Calendar, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import { useCurrency } from '../contexts/useCurrency';
 
 interface SummaryReportProps {
   damageDescription: string;
@@ -16,12 +17,7 @@ export default function SummaryReport({
   totalCost,
   onDownloadReport 
 }: SummaryReportProps) {
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('en-US', {
-      style: 'currency',
-      currency: 'USD',
-    }).format(amount);
-  };
+  const { formatCurrency } = useCurrency();
 
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden">
